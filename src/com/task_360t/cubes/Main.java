@@ -1,9 +1,29 @@
+
 package com.task_360t.cubes;
 
-public class Main {
+import com.task_360t.cubes.utilities.CubeLogger;
+import com.task_360t.cubes.utilities.FileHandler;
 
+import com.task_360t.cubes.exceptions.InvalidPieceException;
+import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
+import com.task_360t.cubes.models.Cube;
+
+/**
+ * @author amahran
+ * Main function
+ */
+public class Main {
+	static CubeLogger logger = CubeLogger.getInstant();
 	public static void main(String[] args) {
-		
+		logger.INFO("Starting...");
+		CubeSolver solver = new CubeSolver();
+		try {
+			Cube cube = solver.createCube(Input.PiecesInputs);
+			FileHandler.dumpCube(cube);
+		} catch (NoPossibleSolutionException | InvalidPieceException e) {
+			logger.ERROR(e);
+		}
+		logger.INFO("Done...");
 	}
 
 }
