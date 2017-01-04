@@ -19,7 +19,6 @@ public class Piece {
 	private BitSet topEdge;
 	private BitSet bottomEdge;
 
-	
 	/**
 	 * Initialize the piece array with the arr param
 	 * 
@@ -44,23 +43,22 @@ public class Piece {
 	public Piece() {
 		pieceArray = new boolean[5][5];
 	}
-	
+
 	public Piece(Piece piece) {
 		pieceArray = new boolean[5][5];
 		for (int i = 0; i < 5; i++) {
-	        System.arraycopy(piece.pieceArray[i], 0, this.pieceArray[i], 0, piece.pieceArray[i].length);
-	    }
+			System.arraycopy(piece.pieceArray[i], 0, this.pieceArray[i], 0, piece.pieceArray[i].length);
+		}
 	}
 
 	/**
 	 * @return the rightEdge
 	 */
 	public BitSet getRightEdge() {
-		if(rightEdge == null)
-		{
+		if (rightEdge == null) {
 			rightEdge = new BitSet(00000);
-			for(int i=0; i<5; i++)
-				rightEdge.set(i, pieceArray[i][4]);			
+			for (int i = 0; i < 5; i++)
+				rightEdge.set(i, pieceArray[i][4]);
 		}
 		return rightEdge;
 	}
@@ -69,11 +67,10 @@ public class Piece {
 	 * @return the lefttEdge
 	 */
 	public BitSet getLeftEdge() {
-		if(lefttEdge == null)
-		{
+		if (lefttEdge == null) {
 			lefttEdge = new BitSet(00000);
-			for(int i=0; i<5; i++)
-				lefttEdge.set(i, pieceArray[i][0]);			
+			for (int i = 0; i < 5; i++)
+				lefttEdge.set(i, pieceArray[i][0]);
 		}
 		return lefttEdge;
 	}
@@ -82,11 +79,10 @@ public class Piece {
 	 * @return the topEdge
 	 */
 	public BitSet getTopEdge() {
-		if(topEdge == null)
-		{
+		if (topEdge == null) {
 			topEdge = new BitSet(00000);
-			for(int i=0; i<5; i++)
-				topEdge.set(i, pieceArray[0][i]);			
+			for (int i = 0; i < 5; i++)
+				topEdge.set(i, pieceArray[0][i]);
 		}
 		return topEdge;
 	}
@@ -95,46 +91,43 @@ public class Piece {
 	 * @return the bottomEdge
 	 */
 	public BitSet getBottomEdge() {
-		if(bottomEdge == null)
-		{
+		if (bottomEdge == null) {
 			bottomEdge = new BitSet(00000);
-			for(int i=0; i<5; i++)
-				bottomEdge.set(i, pieceArray[4][i]);			
+			for (int i = 0; i < 5; i++)
+				bottomEdge.set(i, pieceArray[4][i]);
 		}
 		return bottomEdge;
 	}
 
-	BitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException
-	{
+	BitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException {
 		switch (edge) {
-			case CONSTANTS.TOP_EDGE:
-				return getTopEdge();
-			case CONSTANTS.RIGHT_EDGE:
-				return getTopEdge();
-			case CONSTANTS.BOTTOM_EDGE:
-				return getBottomEdge();
-			case CONSTANTS.LEFT_EDGE:
-				return getLeftEdge();
-			default:
-				throw new InvalidEdgeException("Wrond edge id");
+		case CONSTANTS.TOP_EDGE:
+			return getTopEdge();
+		case CONSTANTS.RIGHT_EDGE:
+			return getTopEdge();
+		case CONSTANTS.BOTTOM_EDGE:
+			return getBottomEdge();
+		case CONSTANTS.LEFT_EDGE:
+			return getLeftEdge();
+		default:
+			throw new InvalidEdgeException("Wrond edge id");
 		}
 	}
 
 	public String getRowStr(int rowIdx) {
-		StringBuffer buff= new StringBuffer();
-		for(int i=0; i<5; i++)
-			if(pieceArray[rowIdx][i])
+		StringBuffer buff = new StringBuffer();
+		for (int i = 0; i < 5; i++)
+			if (pieceArray[rowIdx][i])
 				buff.append("[]");
 			else
 				buff.append("  ");
-		
+
 		return buff.toString();
 	}
 
 	public String toString(String indent) {
-		StringBuffer buff= new StringBuffer();
-		for(int i=0; i<5; ++i)
-		{
+		StringBuffer buff = new StringBuffer();
+		for (int i = 0; i < 5; ++i) {
 			buff.append(indent + getRowStr(i));
 			buff.append(System.lineSeparator());
 		}
@@ -161,18 +154,18 @@ public class Piece {
 
 	public boolean getCornerBit(CornersBit cb) {
 		switch (cb) {
-			case TR:
-				return getTopEdge().get(4) || getRightEdge().get(0);
-			case BR:
-				return getBottomEdge().get(4) || getRightEdge().get(4);
-				
-			case BL:
-				return getBottomEdge().get(0) || getLeftEdge().get(4);
-				
-			case TL:
-				return getTopEdge().get(0) || getLeftEdge().get(0);
-			default:
-				break;
+		case TR:
+			return getTopEdge().get(4) || getRightEdge().get(0);
+		case BR:
+			return getBottomEdge().get(4) || getRightEdge().get(4);
+
+		case BL:
+			return getBottomEdge().get(0) || getLeftEdge().get(4);
+
+		case TL:
+			return getTopEdge().get(0) || getLeftEdge().get(0);
+		default:
+			break;
 		}
 		return false;
 	}

@@ -28,7 +28,7 @@ public class CubeLogger {
 	 */
 	private CubeLogger() {
 		setEnable(CONSTANTS.LOGGER_ENABLE);
-		logger = Logger.getLogger(CONSTANTS.CUBES_LOGGER);
+		logger = Logger.getLogger(CONSTANTS.CUBE_LOGGER_NAME);
 		if(CONSTANTS.LOGGER_ENABLE_FILE_LOGGING)
 			enableFileLogging();
 		for (Handler h : logger.getHandlers()) {

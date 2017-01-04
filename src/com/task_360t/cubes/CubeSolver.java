@@ -41,18 +41,20 @@ public class CubeSolver {
 			if(sol != null)
 				return sol;
 			// if this failed, flip the piece and try again
-			piece.flipPiece();
-			sol = fillNextCubeFace(cube, piece, pieces);
-			if(sol != null)
-				return sol;
+//			piece.flipPiece();
+//			sol = fillNextCubeFace(cube, piece, pieces);
+//			if(sol != null)
+//				return sol;
 		}
 		
 		return null;
 	}
 	//
 	private Cube fillNextCubeFace(Cube cube, Piece piece, List<Piece> pieces) {
-		for(int i=0; i<4; ++i)
+		for(int i=0; i<8; ++i)
 		{
+			if(i ==4)
+				piece.flipPiece();
 			if(cube.isPieceMatch(piece))
 			{
 				Cube tmpCube = new Cube(cube);
@@ -65,7 +67,9 @@ public class CubeSolver {
 					return sol;
 			}
 			piece.rotateClockWise();
+			
 		}
+		piece.flipPiece();
 		return null;
 	}
 }

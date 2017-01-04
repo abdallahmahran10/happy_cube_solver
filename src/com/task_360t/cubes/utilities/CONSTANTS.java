@@ -13,5 +13,6 @@ public class CONSTANTS {
 	public static final boolean ON = true;
 	public static final boolean OFF =false;
 
-	public static final String INDENT = "     ";
+	public static final String INDENT = "          ";
+	public static final String INPUT_FILE_NAME = "input.txt";
 }
