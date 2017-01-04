@@ -95,7 +95,7 @@ public class Piece {
 	 * @return the bottomEdge
 	 */
 	public BitSet getBottomEdge() {
-		if(topEdge == null)
+		if(bottomEdge == null)
 		{
 			bottomEdge = new BitSet(00000);
 			for(int i=0; i<5; i++)
@@ -141,6 +141,15 @@ public class Piece {
 		return buff.toString();
 	}
 
+	public void flipPiece() {
+		BitSet tmp = topEdge;
+		topEdge = bottomEdge;
+		bottomEdge = tmp;
+		tmp = rightEdge;
+		rightEdge = lefttEdge;
+		lefttEdge = tmp;
+	}
+
 	public void rotateClockWise() {
 		BitSet tmp1 = topEdge, tmp2 = rightEdge;
 		topEdge = lefttEdge;
@@ -148,6 +157,24 @@ public class Piece {
 		tmp1 = bottomEdge;
 		bottomEdge = tmp2;
 		lefttEdge = tmp1;
+	}
+
+	public boolean getCornerBit(CornersBit cb) {
+		switch (cb) {
+			case TR:
+				return getTopEdge().get(4) || getRightEdge().get(0);
+			case BR:
+				return getBottomEdge().get(4) || getRightEdge().get(4);
+				
+			case BL:
+				return getBottomEdge().get(0) || getLeftEdge().get(4);
+				
+			case TL:
+				return getTopEdge().get(0) || getLeftEdge().get(0);
+			default:
+				break;
+		}
+		return false;
 	}
 
 }
