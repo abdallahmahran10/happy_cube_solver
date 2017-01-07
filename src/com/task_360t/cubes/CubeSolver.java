@@ -2,13 +2,14 @@ package com.task_360t.cubes;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
 import com.task_360t.cubes.models.Cube;
 import com.task_360t.cubes.models.Piece;
+import com.task_360t.cubes.utilities.CubeLogger;
 
 public class CubeSolver {
+	static CubeLogger logger = CubeLogger.getInstant();
 	/**
 	 * Arrange pieces to form a cube
 	 * 
@@ -20,6 +21,7 @@ public class CubeSolver {
 	public Cube createCube(List<Piece> piecesInput) throws NoPossibleSolutionException, InvalidPieceException {
 		if (piecesInput.size() != 6)
 			throw new InvalidPieceException("Invalid input pieces");
+		piecesInput.get(1).rotateClockWise();
 		Cube solution = new Cube();
 		solution = fillCubeWithPieces(solution, piecesInput);
 		if (solution == null)
@@ -40,11 +42,6 @@ public class CubeSolver {
 			Cube sol = fillNextCubeFace(cube, piece, pieces);
 			if(sol != null)
 				return sol;
-			// if this failed, flip the piece and try again
-//			piece.flipPiece();
-//			sol = fillNextCubeFace(cube, piece, pieces);
-//			if(sol != null)
-//				return sol;
 		}
 		
 		return null;
@@ -55,6 +52,7 @@ public class CubeSolver {
 		{
 			if(i ==4)
 				piece.flipPiece();
+			//logger.INFO(System.lineSeparator() + cube.toString());
 			if(cube.isPieceMatch(piece))
 			{
 				Cube tmpCube = new Cube(cube);
@@ -67,7 +65,6 @@ public class CubeSolver {
 					return sol;
 			}
 			piece.rotateClockWise();
-			
 		}
 		piece.flipPiece();
 		return null;

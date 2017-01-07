@@ -1,7 +1,5 @@
 package com.task_360t.cubes.models;
 
-import java.util.BitSet;
-
 import com.task_360t.cubes.exceptions.InvalidEdgeException;
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.utilities.CONSTANTS;
@@ -14,10 +12,10 @@ import com.task_360t.cubes.utilities.CONSTANTS;
  */
 public class Piece {
 	boolean[][] pieceArray;
-	private BitSet rightEdge;
-	private BitSet lefttEdge;
-	private BitSet topEdge;
-	private BitSet bottomEdge;
+	private EdgeBitSet rightEdge;
+	private EdgeBitSet lefttEdge;
+	private EdgeBitSet topEdge;
+	private EdgeBitSet bottomEdge;
 
 	/**
 	 * Initialize the piece array with the arr param
@@ -54,9 +52,9 @@ public class Piece {
 	/**
 	 * @return the rightEdge
 	 */
-	public BitSet getRightEdge() {
+	public EdgeBitSet getRightEdge() {
 		if (rightEdge == null) {
-			rightEdge = new BitSet(00000);
+			rightEdge = new EdgeBitSet();
 			for (int i = 0; i < 5; i++)
 				rightEdge.set(i, pieceArray[i][4]);
 		}
@@ -66,9 +64,9 @@ public class Piece {
 	/**
 	 * @return the lefttEdge
 	 */
-	public BitSet getLeftEdge() {
+	public EdgeBitSet getLeftEdge() {
 		if (lefttEdge == null) {
-			lefttEdge = new BitSet(00000);
+			lefttEdge = new EdgeBitSet();
 			for (int i = 0; i < 5; i++)
 				lefttEdge.set(i, pieceArray[i][0]);
 		}
@@ -78,9 +76,9 @@ public class Piece {
 	/**
 	 * @return the topEdge
 	 */
-	public BitSet getTopEdge() {
+	public EdgeBitSet getTopEdge() {
 		if (topEdge == null) {
-			topEdge = new BitSet(00000);
+			topEdge = new EdgeBitSet();
 			for (int i = 0; i < 5; i++)
 				topEdge.set(i, pieceArray[0][i]);
 		}
@@ -90,16 +88,16 @@ public class Piece {
 	/**
 	 * @return the bottomEdge
 	 */
-	public BitSet getBottomEdge() {
+	public EdgeBitSet getBottomEdge() {
 		if (bottomEdge == null) {
-			bottomEdge = new BitSet(00000);
+			bottomEdge = new EdgeBitSet(00000);
 			for (int i = 0; i < 5; i++)
 				bottomEdge.set(i, pieceArray[4][i]);
 		}
 		return bottomEdge;
 	}
 
-	BitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException {
+	EdgeBitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException {
 		switch (edge) {
 		case CONSTANTS.TOP_EDGE:
 			return getTopEdge();
@@ -114,28 +112,8 @@ public class Piece {
 		}
 	}
 
-	public String getRowStr(int rowIdx) {
-		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < 5; i++)
-			if (pieceArray[rowIdx][i])
-				buff.append("[]");
-			else
-				buff.append("  ");
-
-		return buff.toString();
-	}
-
-	public String toString(String indent) {
-		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < 5; ++i) {
-			buff.append(indent + getRowStr(i));
-			buff.append(System.lineSeparator());
-		}
-		return buff.toString();
-	}
-
 	public void flipPiece() {
-		BitSet tmp = topEdge;
+		EdgeBitSet tmp = topEdge;
 		topEdge = bottomEdge;
 		bottomEdge = tmp;
 		tmp = rightEdge;
@@ -144,12 +122,24 @@ public class Piece {
 	}
 
 	public void rotateClockWise() {
-		BitSet tmp1 = topEdge, tmp2 = rightEdge;
-		topEdge = lefttEdge;
-		rightEdge = tmp1;
-		tmp1 = bottomEdge;
-		bottomEdge = tmp2;
-		lefttEdge = tmp1;
+		EdgeBitSet tmpTop = (EdgeBitSet) topEdge;
+		// set TOP edge
+		topEdge = lefttEdge.edgeReverse();
+		EdgeBitSet tmpRight = (EdgeBitSet) rightEdge.edgeReverse();
+		EdgeBitSet tmpBottom = (EdgeBitSet) bottomEdge;
+		lefttEdge = tmpBottom;
+		bottomEdge = tmpRight;
+		rightEdge = tmpTop;
+		/*
+		EdgeBitSet tmpTop = (EdgeBitSet) topEdge.clone();
+		// set TOP edge
+		topEdge = lefttEdge.edgeReverse();
+		EdgeBitSet tmpRight = (EdgeBitSet) rightEdge.edgeReverse().clone();
+		EdgeBitSet tmpBottom = (EdgeBitSet) bottomEdge.clone();
+		lefttEdge = tmpBottom;
+		bottomEdge = tmpRight;
+		rightEdge = tmpTop;
+		*/
 	}
 
 	public boolean getCornerBit(CornersBit cb) {
@@ -168,6 +158,33 @@ public class Piece {
 			break;
 		}
 		return false;
+	}
+
+	public String getRowStr(int rowIdx) {
+		if(rowIdx == 0)
+			return getTopEdge().toString();
+		if(rowIdx == 4)
+			return getBottomEdge().toString();		
+		EdgeBitSet rowBitSet = new EdgeBitSet();
+		rowBitSet.set(4, getRightEdge().get(rowIdx));
+		rowBitSet.set(0, getLeftEdge().get(rowIdx));
+		rowBitSet.set(1, 4);
+		return rowBitSet.toString();
+	}
+
+	
+	public String toString(String indent) {
+		StringBuffer buff = new StringBuffer();
+		for (int i = 0; i < 5; ++i) {
+			buff.append(indent + getRowStr(i));
+			buff.append(System.lineSeparator());
+		}
+		return buff.toString();
+	}
+	
+	@Override
+	public String toString() {
+		return toString("");
 	}
 
 }
