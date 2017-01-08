@@ -12,10 +12,9 @@ public class CONSTANTS {
 
 
 	public static final String INDENT = "          ";
-	public static final String INPUT_FILE_NAME1 = "input1.txt";
-	public static final String INPUT_FILE_NAME2 = "input2.txt";
 	public static final Object FILLED_CELL = "[]";
 	public static final Object EMPTY_CELL  = "  ";
 	public static final int MAX_FACES = 6;
 	public static final int MAX_CELLS = 5;
+	public static final String[] INPUT_FILES = {"input1.txt", "input2.txt", "input3.txt"};
 }

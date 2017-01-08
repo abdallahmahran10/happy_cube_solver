@@ -2,6 +2,8 @@ package com.task_360t.cubes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
@@ -19,6 +21,25 @@ public class CubeSolver {
 	static CubeLogger logger = CubeLogger.getInstant();
 
 	/**
+	 * @param pieces
+	 * @return
+	 */
+	public List<Cube> findAllPossibleSolutions(List<Piece> pieces) throws NoPossibleSolutionException, InvalidPieceException {
+		if (pieces.size() != CONSTANTS.MAX_FACES)
+			throw new InvalidPieceException("Invalid input pieces");
+		logger.INFO("Create a cube and try to fill with the input pieces");
+		Cube solution = new Cube();
+		Queue<Cube> cubes = new PriorityQueue<Cube>();
+		do {
+			solution = fillCubeWithPieces(solution, pieces, cubes);	
+		} while (solution!=null);
+		
+		if (cubes.isEmpty())
+			throw new NoPossibleSolutionException("Could not form a cube using the input pieces");
+		logger.INFO("Cube Successfully created!");
+		return null;
+	}
+	/**
 	 * Arrange pieces to form a cube
 	 * 
 	 * @param piecesInput
@@ -31,7 +52,7 @@ public class CubeSolver {
 			throw new InvalidPieceException("Invalid input pieces");
 		logger.INFO("Create a cube and try to fill with the input pieces");
 		Cube solution = new Cube();
-		solution = fillCubeWithPieces(solution, piecesInput);
+		solution = fillCubeWithPieces(solution, piecesInput, null);
 		if (solution == null)
 			throw new NoPossibleSolutionException("Could not form a cube using the input pieces");
 		logger.INFO("Cube Successfully created!");
@@ -48,16 +69,20 @@ public class CubeSolver {
 	 *            list to be used to fill the cube
 	 * @return if success return the filled cube
 	 */
-	private Cube fillCubeWithPieces(Cube cube, List<Piece> pieces) {
+	private Cube fillCubeWithPieces(Cube cube, List<Piece> pieces,Queue<Cube> cubes) {
 		if (cube.isCubeFormed())
+		{
+			if(cubes!=null && !cubes.contains(cube))
+				cubes.add(cube);
 			return cube;
+		}
 		//
 		if (pieces.size() < 1)
 			return null;
 		//
 		for (Piece piece : pieces) {
 			// try to fill the current cube the pieces list
-			Cube sol = fillNextCubeFace(cube, piece, pieces);
+			Cube sol = fillNextCubeFace(cube, piece, pieces,cubes);
 			if (sol != null)
 				return sol;
 		}
@@ -77,9 +102,10 @@ public class CubeSolver {
 	 * @param pieces
 	 *            the rest of the pieces that did not assigned to one of the
 	 *            faces in the cube
+	 * @param cubes 
 	 * @return if success return the filled cube
 	 */
-	private Cube fillNextCubeFace(Cube cube, Piece piece, List<Piece> pieces) {
+	private Cube fillNextCubeFace(Cube cube, Piece piece, List<Piece> pieces, Queue<Cube> cubes) {
 		for (int i = 0; i < 8; ++i) {
 			if (i == 4)
 				piece.flipPiece();
@@ -90,7 +116,9 @@ public class CubeSolver {
 				// Complete the rest of the cube
 				List<Piece> tmpList = new ArrayList<Piece>(pieces);
 				tmpList.remove(piece);
-				Cube sol = fillCubeWithPieces(tmpCube, tmpList);
+//				if(cubes!=null && cube.isCubeFormed())
+//					cubes.add(cube);
+				Cube sol = fillCubeWithPieces(tmpCube, tmpList, cubes);
 				if (sol != null)
 					return sol;
 			}
@@ -98,5 +126,17 @@ public class CubeSolver {
 		}
 		piece.flipPiece();
 		return null;
+	}
+
+	/**
+	 * @param pieces
+	 * @return
+	 * @throws CloneNotSupportedException 
+	 */
+	private List<Piece> cloneArray(List<Piece> pieces)  {
+	    List<Piece> clone = new ArrayList<Piece>(pieces.size());
+	    for (Piece item : pieces) 
+	    	clone.add((Piece) item.clone());
+	    return clone;
 	}
 }

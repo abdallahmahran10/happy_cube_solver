@@ -39,6 +39,23 @@ public class EdgeBitSet extends BitSet {
 		this.set(1, tmp);
 		return (EdgeBitSet) this;
 	}
+	
+	public long toLong() {
+	    long value = 0L;
+	    for (int i = 0; i < this.length(); ++i) {
+	      value += this.get(i) ? (1L << i) : 0L;
+	    }
+	    return value;
+	  }
+	/**
+	 * check if BitSet is equals the'int
+	 * @param i check if BitSet is equals this int
+	 * @return true if equals
+	 */
+	public boolean equalsLong(long i) {
+		return toLong() == i;
+	}
+
 
 	@Override
 	public String toString() {
@@ -50,9 +67,10 @@ public class EdgeBitSet extends BitSet {
 				buff.append(CONSTANTS.EMPTY_CELL);
 		return buff.toString();
 	}
-
 	@Override
 	public EdgeBitSet clone() {
 		return (EdgeBitSet) super.clone();
 	}
+	
+
 }

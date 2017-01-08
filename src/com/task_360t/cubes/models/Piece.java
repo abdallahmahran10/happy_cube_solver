@@ -51,11 +51,12 @@ public class Piece {
 		}
 		//
 		this.pieceId = piece.pieceId;
-		this.rightEdge = piece.rightEdge.clone();
-		this.lefttEdge =  piece.rightEdge.clone();
-		this.topEdge = piece.rightEdge.clone();
-		this.bottomEdge = piece.rightEdge.clone();
+		this.rightEdge = piece.getRightEdge().clone();
+		this.lefttEdge =  piece.getLeftEdge().clone();
+		this.topEdge = piece.getTopEdge().clone();
+		this.bottomEdge = piece.getBottomEdge().clone();
 	}
+	
 /********************** Setters and Getters ***********************************/
 	/**
 	 * @return the rightEdge
@@ -111,8 +112,8 @@ public class Piece {
 	public int getPieceId() {
 		return pieceId;
 	}
-	
-	//
+
+/********************** Class methods ***********************************/
 	EdgeBitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException {
 		switch (edge) {
 		case CONSTANTS.TOP_EDGE:
@@ -127,7 +128,7 @@ public class Piece {
 			throw new InvalidEdgeException("Wrond edge id");
 		}
 	}
-
+/*
 	public Piece flipPiece() {
 		EdgeBitSet tmp = topEdge;
 		topEdge = bottomEdge;
@@ -136,8 +137,18 @@ public class Piece {
 		rightEdge = lefttEdge;
 		lefttEdge = tmp;
 		return this;
+	}*/
+	public Piece flipPiece() {
+		EdgeBitSet tmp = getRightEdge();
+		rightEdge = getLeftEdge();
+		lefttEdge = tmp;
+		//
+		getTopEdge().edgeReverse();
+		getBottomEdge().edgeReverse();
+		//
+		return this;
 	}
-
+	
 	public Piece rotateClockWise() {
 		EdgeBitSet tmpTop = (EdgeBitSet) topEdge;
 		// set TOP edge
@@ -148,16 +159,6 @@ public class Piece {
 		bottomEdge = tmpRight;
 		rightEdge = tmpTop;
 		return this;
-		/*
-		EdgeBitSet tmpTop = (EdgeBitSet) topEdge.clone();
-		// set TOP edge
-		topEdge = lefttEdge.edgeReverse();
-		EdgeBitSet tmpRight = (EdgeBitSet) rightEdge.edgeReverse().clone();
-		EdgeBitSet tmpBottom = (EdgeBitSet) bottomEdge.clone();
-		lefttEdge = tmpBottom;
-		bottomEdge = tmpRight;
-		rightEdge = tmpTop;
-		*/
 	}
 
 	public boolean getCornerBit(CornersBit cb) {
@@ -204,5 +205,13 @@ public class Piece {
 	public String toString() {
 		return toString("");
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object clone() {
+		
+		return new Piece(this);
+	}
 }
