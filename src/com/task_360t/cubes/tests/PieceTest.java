@@ -1,7 +1,5 @@
 package com.task_360t.cubes.tests;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import com.task_360t.cubes.exceptions.InvalidPieceException;
@@ -15,7 +13,7 @@ public class PieceTest {
 		Piece piece;
 		boolean[][] arr = new boolean[5][5];
 		// Act
-		piece = new Piece(arr);
+		piece = new Piece(arr, 0);
 	}
 
 	@Test(expected = InvalidPieceException.class)
@@ -24,7 +22,7 @@ public class PieceTest {
 		Piece piece;
 		boolean[][] arr = new boolean[4][5];
 		// Act
-		piece = new Piece(arr);
+		piece = new Piece(arr, 0);
 	}
 
 }

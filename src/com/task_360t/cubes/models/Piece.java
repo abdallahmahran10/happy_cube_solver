@@ -5,12 +5,13 @@ import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.utilities.CONSTANTS;
 
 /**
- * Representation of one piece
+ * Representation of a puzzle piece
  * 
  * @author amahran
  * 
  */
 public class Piece {
+	private int pieceId;
 	boolean[][] pieceArray;
 	private EdgeBitSet rightEdge;
 	private EdgeBitSet lefttEdge;
@@ -24,9 +25,10 @@ public class Piece {
 	 *            piece array
 	 * @throws InvalidPieceException
 	 */
-	public Piece(boolean[][] arr) throws InvalidPieceException {
-		if (arr.length != 5 || arr[0].length != 5)
+	public Piece(boolean[][] arr, int pieceId) throws InvalidPieceException {
+		if (arr.length != CONSTANTS.MAX_CELLS || arr[0].length != CONSTANTS.MAX_CELLS)
 			throw new InvalidPieceException("Invalid piece array");
+		this.pieceId = pieceId;
 		pieceArray = arr;
 		createEdges();
 	}
@@ -39,24 +41,30 @@ public class Piece {
 	}
 
 	public Piece() {
-		pieceArray = new boolean[5][5];
+		pieceArray = new boolean[CONSTANTS.MAX_CELLS][CONSTANTS.MAX_CELLS];
 	}
 
 	public Piece(Piece piece) {
-		pieceArray = new boolean[5][5];
-		for (int i = 0; i < 5; i++) {
+		pieceArray = new boolean[CONSTANTS.MAX_CELLS][CONSTANTS.MAX_CELLS];
+		for (int i = 0; i < CONSTANTS.MAX_CELLS; i++) {
 			System.arraycopy(piece.pieceArray[i], 0, this.pieceArray[i], 0, piece.pieceArray[i].length);
 		}
+		//
+		this.pieceId = piece.pieceId;
+		this.rightEdge = piece.rightEdge.clone();
+		this.lefttEdge =  piece.rightEdge.clone();
+		this.topEdge = piece.rightEdge.clone();
+		this.bottomEdge = piece.rightEdge.clone();
 	}
-
+/********************** Setters and Getters ***********************************/
 	/**
 	 * @return the rightEdge
 	 */
 	public EdgeBitSet getRightEdge() {
 		if (rightEdge == null) {
 			rightEdge = new EdgeBitSet();
-			for (int i = 0; i < 5; i++)
-				rightEdge.set(i, pieceArray[i][4]);
+			for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
+				rightEdge.set(i, pieceArray[i][CONSTANTS.MAX_CELLS-1]);
 		}
 		return rightEdge;
 	}
@@ -67,7 +75,7 @@ public class Piece {
 	public EdgeBitSet getLeftEdge() {
 		if (lefttEdge == null) {
 			lefttEdge = new EdgeBitSet();
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
 				lefttEdge.set(i, pieceArray[i][0]);
 		}
 		return lefttEdge;
@@ -79,7 +87,7 @@ public class Piece {
 	public EdgeBitSet getTopEdge() {
 		if (topEdge == null) {
 			topEdge = new EdgeBitSet();
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
 				topEdge.set(i, pieceArray[0][i]);
 		}
 		return topEdge;
@@ -91,12 +99,20 @@ public class Piece {
 	public EdgeBitSet getBottomEdge() {
 		if (bottomEdge == null) {
 			bottomEdge = new EdgeBitSet(00000);
-			for (int i = 0; i < 5; i++)
-				bottomEdge.set(i, pieceArray[4][i]);
+			for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
+				bottomEdge.set(i, pieceArray[CONSTANTS.MAX_CELLS-1][i]);
 		}
 		return bottomEdge;
 	}
 
+	/**
+	 * @return the pieceId
+	 */
+	public int getPieceId() {
+		return pieceId;
+	}
+	
+	//
 	EdgeBitSet getEdgeBitRepresentation(int edge) throws InvalidEdgeException {
 		switch (edge) {
 		case CONSTANTS.TOP_EDGE:
@@ -112,16 +128,17 @@ public class Piece {
 		}
 	}
 
-	public void flipPiece() {
+	public Piece flipPiece() {
 		EdgeBitSet tmp = topEdge;
 		topEdge = bottomEdge;
 		bottomEdge = tmp;
 		tmp = rightEdge;
 		rightEdge = lefttEdge;
 		lefttEdge = tmp;
+		return this;
 	}
 
-	public void rotateClockWise() {
+	public Piece rotateClockWise() {
 		EdgeBitSet tmpTop = (EdgeBitSet) topEdge;
 		// set TOP edge
 		topEdge = lefttEdge.edgeReverse();
@@ -130,6 +147,7 @@ public class Piece {
 		lefttEdge = tmpBottom;
 		bottomEdge = tmpRight;
 		rightEdge = tmpTop;
+		return this;
 		/*
 		EdgeBitSet tmpTop = (EdgeBitSet) topEdge.clone();
 		// set TOP edge
@@ -175,7 +193,7 @@ public class Piece {
 	
 	public String toString(String indent) {
 		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < CONSTANTS.MAX_CELLS; ++i) {
 			buff.append(indent + getRowStr(i));
 			buff.append(System.lineSeparator());
 		}

@@ -3,24 +3,46 @@ package com.task_360t.cubes.models;
 import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 
+/**
+ * type represents a cube
+ * 
+ * @author amahran
+ */
 public class Cube {
 	CubeLogger logger = CubeLogger.getInstant();
 	public Piece[] faces;
 	private int currentFaceIdx;
 
+	/**
+	 * Default ctor, initialize the faces array
+	 */
 	public Cube() {
-		faces = new Piece[6];
-		for (int i = 0; i < 6; ++i)
+		faces = new Piece[CONSTANTS.MAX_FACES];
+		for (int i = 0; i < CONSTANTS.MAX_FACES; ++i)
 			faces[i] = new Piece();
 		currentFaceIdx = 0;
 	}
 
+	/**
+	 * Copy constructor
+	 * 
+	 * @param cube
+	 *            object to be copied to this instant
+	 */
 	public Cube(Cube cube) {
-		this.faces = new Piece[6];
+		this.faces = new Piece[CONSTANTS.MAX_FACES];
 		System.arraycopy(cube.faces, 0, this.faces, 0, cube.faces.length);
 		this.currentFaceIdx = cube.currentFaceIdx;
 	}
 
+	/**
+	 * Check if the input piece can be set to the current empty face by checking
+	 * the compatibility of the piece with the previous faces
+	 * 
+	 * @param piece
+	 *            input piece
+	 * @return true if the piece can be set to the current face, false otherwise
+	 */
 	public boolean isPieceMatch(Piece piece) {
 		switch (currentFaceIdx) {
 		case 0:
@@ -67,45 +89,71 @@ public class Cube {
 		return false;
 	}
 
-//	private boolean matches(BitSet currentEdge, BitSet interstingEdge) {
-//		// TODO Auto-generated method stub
-//		BitSet set = (BitSet) currentEdge.clone();
-//		set.or(interstingEdge);
-//		return set.get(1) && set.get(2) && set.get(3);
-//	}
-
-	private boolean matches(boolean a, boolean b, boolean c) {
-		return (a && !b && !c) || (!a && b && !c) || (!a && !b && c);
+	/**
+	 * check if corners matches, only one of the pieces corners should be set
+	 * 
+	 * @param cornerCell1
+	 *            corner cell of piece 1
+	 * @param cornerCell3
+	 *            corner cell of piece 2
+	 * @param cornerCell3
+	 *            corner cell of piece 3
+	 * @return true if they matched, false otherwise
+	 */
+	private boolean matches(boolean cornerCell1, boolean cornerCell2, boolean cornerCell3) {
+		return (cornerCell1 && !cornerCell3 && !cornerCell3) || (!cornerCell1 && cornerCell3 && !cornerCell3)
+				|| (!cornerCell1 && !cornerCell3 && cornerCell3);
 	}
 
+	/**
+	 * Set the current empty face with the input piece and advances the
+	 * currentFaceIdx pointer
+	 * 
+	 * NOTE: this Method should not be called unless the piece matches
+	 * 
+	 * @param piece
+	 */
 	public void setNextFace(Piece piece) {
 		faces[currentFaceIdx] = piece;
 		++currentFaceIdx;
 	}
 
+	/**
+	 * check if the cube filled
+	 * 
+	 * @return true if cube filled, false otherwise
+	 */
 	public boolean isCubeFormed() {
-		return currentFaceIdx == 6;
+		return currentFaceIdx == CONSTANTS.MAX_FACES;
 	}
 
+	/**
+	 * override to Object toStrnig function to return the string representation
+	 * of a cube
+	 */
 	@Override
-	public String toString() { 
-		if(currentFaceIdx==0)
-			return "";
+	public String toString() {
 		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			buff.append(faces[0].getRowStr(i) + CONSTANTS.EMPTY_CELL);
-			if(currentFaceIdx>1)
-				buff.append(faces[1].getRowStr(i)+ CONSTANTS.EMPTY_CELL);
-			if(currentFaceIdx>2)
-				buff.append(faces[2].getRowStr(i));
-			buff.append(System.lineSeparator());
-		}
-		if(currentFaceIdx>3)
-			buff.append(faces[3].toString(CONSTANTS.INDENT));
-		if(currentFaceIdx>4)
-			buff.append(faces[4].toString(CONSTANTS.INDENT));
-		if(currentFaceIdx>5)
-			buff.append(faces[5].toString(CONSTANTS.INDENT));
+		for (int i = 0; i < currentFaceIdx; i++)
+			buff.append(System.lineSeparator() + faces[i].toString());
+		//
+		// if(currentFaceIdx==0)
+		// return "";
+		// StringBuffer buff = new StringBuffer();
+		// for (int i = 0; i < 5; i++) {
+		// buff.append(faces[0].getRowStr(i) + CONSTANTS.EMPTY_CELL);
+		// if(currentFaceIdx>1)
+		// buff.append(faces[1].getRowStr(i)+ CONSTANTS.EMPTY_CELL);
+		// if(currentFaceIdx>2)
+		// buff.append(faces[2].getRowStr(i));
+		// buff.append(System.lineSeparator());
+		// }
+		// if(currentFaceIdx>3)
+		// buff.append(faces[3].toString(CONSTANTS.INDENT));
+		// if(currentFaceIdx>4)
+		// buff.append(faces[4].toString(CONSTANTS.INDENT));
+		// if(currentFaceIdx>5)
+		// buff.append(faces[5].toString(CONSTANTS.INDENT));
 		return buff.toString();
 	}
 

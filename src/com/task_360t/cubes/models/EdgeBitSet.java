@@ -4,6 +4,11 @@ import java.util.BitSet;
 
 import com.task_360t.cubes.utilities.CONSTANTS;
 
+/**
+ * Extension of the BitSet class to handle pieces edge
+ * @author amahran
+ *
+ */
 public class EdgeBitSet extends BitSet {
 
 	private static final long serialVersionUID = -8613596608641317196L;
@@ -11,20 +16,19 @@ public class EdgeBitSet extends BitSet {
 	public EdgeBitSet() {
 		super();
 	}
-	
+
 	public EdgeBitSet(int nbits) {
 		super(nbits);
 	}
-	
-	public boolean matches(BitSet secondSet)
-	{
+
+	public boolean matches(BitSet secondSet) {
 		BitSet set = (BitSet) secondSet.clone();
 		set.or(this);
-		return set.get(1) && set.get(2) && set.get(3);	
+		return set.get(1) && set.get(2) && set.get(3);
 	}
 
 	public EdgeBitSet edgeReverse() {
-		if(size()<5)
+		if (size() < CONSTANTS.MAX_CELLS)
 			return this;
 		//
 		boolean tmp = this.get(0);
@@ -39,11 +43,16 @@ public class EdgeBitSet extends BitSet {
 	@Override
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < this.length(); i++)
+		for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
 			if (this.get(i))
 				buff.append(CONSTANTS.FILLED_CELL);
 			else
 				buff.append(CONSTANTS.EMPTY_CELL);
 		return buff.toString();
+	}
+
+	@Override
+	public EdgeBitSet clone() {
+		return (EdgeBitSet) super.clone();
 	}
 }
