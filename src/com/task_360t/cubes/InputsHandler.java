@@ -19,7 +19,7 @@ public class InputsHandler {
 	static List<Piece> PiecesInputs;
 	static {
 		PiecesInputs = new ArrayList<Piece>();
-		String input = FileHandler.readFile(CONSTANTS.INPUT_FILES[0]);
+		String input = FileHandler.readFile(CONSTANTS.INPUT_FILES[2]);
 
 		try {
 			if (input != null && !input.isEmpty()) {

@@ -1,5 +1,8 @@
 package com.task_360t.cubes.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 
@@ -135,7 +138,7 @@ public class Cube {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < currentFaceIdx; i++)
-			buff.append(System.lineSeparator() + faces[i].toString());
+			buff.append(String.valueOf(faces[i].getPieceId())+System.lineSeparator() +  faces[i].toString() );
 		//
 		// if(currentFaceIdx==0)
 		// return "";
@@ -155,6 +158,33 @@ public class Cube {
 		// if(currentFaceIdx>5)
 		// buff.append(faces[5].toString(CONSTANTS.INDENT));
 		return buff.toString();
+	}
+
+	/**
+	 * 
+	 */
+	public void removeLastEntry() {
+		if(currentFaceIdx<1)
+			return;
+		currentFaceIdx--;
+		faces[currentFaceIdx] = null;
+	}
+
+	/**
+	 * @param cube
+	 * @return
+	 */
+	public boolean matches(Cube cube) {
+		if( cube.currentFaceIdx != cube.currentFaceIdx)
+			return false;
+		
+		for(int i=0; i<currentFaceIdx; i++)
+		{
+			if(this.faces[i].getPieceId() != cube.faces[i].getPieceId())
+				return false;
+			i++;
+		}
+		return true;
 	}
 
 }

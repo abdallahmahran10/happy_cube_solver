@@ -2,13 +2,14 @@ package com.task_360t.cubes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
 import com.task_360t.cubes.models.Cube;
 import com.task_360t.cubes.models.Piece;
+import com.task_360t.cubes.models.SolutionPath;
 import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 
@@ -19,26 +20,32 @@ import com.task_360t.cubes.utilities.CubeLogger;
  */
 public class CubeSolver {
 	static CubeLogger logger = CubeLogger.getInstant();
+	private Queue<SolutionPath> SolutionPaths = new ConcurrentLinkedQueue<SolutionPath>();
+	Queue<Cube> cubesList = new ConcurrentLinkedQueue<Cube>();
+	private boolean continueSearch;
 
 	/**
 	 * @param pieces
 	 * @return
 	 */
-	public List<Cube> findAllPossibleSolutions(List<Piece> pieces) throws NoPossibleSolutionException, InvalidPieceException {
+	public List<Cube> findAllPossibleSolutions(List<Piece> pieces)
+			throws NoPossibleSolutionException, InvalidPieceException {
 		if (pieces.size() != CONSTANTS.MAX_FACES)
 			throw new InvalidPieceException("Invalid input pieces");
 		logger.INFO("Create a cube and try to fill with the input pieces");
+		// prepare members before start searching for solutions
+		SolutionPaths.clear();
+		SolutionPath path = new SolutionPath();
+		SolutionPaths.add(path);
+		continueSearch = true;
+		//
 		Cube solution = new Cube();
-		Queue<Cube> cubes = new PriorityQueue<Cube>();
-		do {
-			solution = fillCubeWithPieces(solution, pieces, cubes);	
-		} while (solution!=null);
-		
-		if (cubes.isEmpty())
-			throw new NoPossibleSolutionException("Could not form a cube using the input pieces");
-		logger.INFO("Cube Successfully created!");
-		return null;
+		fillCubeWithPieces(solution, pieces);
+		if (cubesList.isEmpty())
+			throw new NoPossibleSolutionException("No possible solution found");
+		return new ArrayList(cubesList);
 	}
+
 	/**
 	 * Arrange pieces to form a cube
 	 * 
@@ -51,8 +58,9 @@ public class CubeSolver {
 		if (piecesInput.size() != CONSTANTS.MAX_FACES)
 			throw new InvalidPieceException("Invalid input pieces");
 		logger.INFO("Create a cube and try to fill with the input pieces");
+		continueSearch = false;
 		Cube solution = new Cube();
-		solution = fillCubeWithPieces(solution, piecesInput, null);
+		solution = fillCubeWithPieces(solution, piecesInput);
 		if (solution == null)
 			throw new NoPossibleSolutionException("Could not form a cube using the input pieces");
 		logger.INFO("Cube Successfully created!");
@@ -69,25 +77,40 @@ public class CubeSolver {
 	 *            list to be used to fill the cube
 	 * @return if success return the filled cube
 	 */
-	private Cube fillCubeWithPieces(Cube cube, List<Piece> pieces,Queue<Cube> cubes) {
+	private Cube fillCubeWithPieces(Cube cube, List<Piece> pieces) {
 		if (cube.isCubeFormed())
-		{
-			if(cubes!=null && !cubes.contains(cube))
-				cubes.add(cube);
 			return cube;
-		}
 		//
 		if (pieces.size() < 1)
 			return null;
 		//
-		for (Piece piece : pieces) {
+		for (int i = 0; i < pieces.size(); i++) {
+			Piece piece = pieces.get(i);
 			// try to fill the current cube the pieces list
-			Cube sol = fillNextCubeFace(cube, piece, pieces,cubes);
-			if (sol != null)
-				return sol;
+			Cube sol = fillNextCubeFace(cube, piece, pieces);
+			if (sol != null) {
+				if(!continueSearch)
+					return sol;					
+				if (sol.isCubeFormed()) {
+					if (cubesList.peek() == null || !addedBefore(sol)) {
+						cubesList.add(new Cube(sol));
+					}
+				} 
+				//return sol;
+			}
 		}
-
 		return null;
+	}
+
+	/**
+	 * @param sol
+	 * @return
+	 */
+	private boolean addedBefore(Cube c) {
+		for(Cube cube : cubesList)
+			if(cube.matches(c))
+				return true;
+		return false;
 	}
 
 	/**
@@ -102,10 +125,10 @@ public class CubeSolver {
 	 * @param pieces
 	 *            the rest of the pieces that did not assigned to one of the
 	 *            faces in the cube
-	 * @param cubes 
+	 * @param cubes
 	 * @return if success return the filled cube
 	 */
-	private Cube fillNextCubeFace(Cube cube, Piece piece, List<Piece> pieces, Queue<Cube> cubes) {
+	private Cube fillNextCubeFace(Cube cube, Piece piece, List<Piece> pieces) {
 		for (int i = 0; i < 8; ++i) {
 			if (i == 4)
 				piece.flipPiece();
@@ -116,9 +139,7 @@ public class CubeSolver {
 				// Complete the rest of the cube
 				List<Piece> tmpList = new ArrayList<Piece>(pieces);
 				tmpList.remove(piece);
-//				if(cubes!=null && cube.isCubeFormed())
-//					cubes.add(cube);
-				Cube sol = fillCubeWithPieces(tmpCube, tmpList, cubes);
+				Cube sol = fillCubeWithPieces(tmpCube, tmpList);
 				if (sol != null)
 					return sol;
 			}
@@ -131,12 +152,12 @@ public class CubeSolver {
 	/**
 	 * @param pieces
 	 * @return
-	 * @throws CloneNotSupportedException 
+	 * @throws CloneNotSupportedException
 	 */
-	private List<Piece> cloneArray(List<Piece> pieces)  {
-	    List<Piece> clone = new ArrayList<Piece>(pieces.size());
-	    for (Piece item : pieces) 
-	    	clone.add((Piece) item.clone());
-	    return clone;
+	private List<Piece> cloneArray(List<Piece> pieces) {
+		List<Piece> clone = new ArrayList<Piece>(pieces.size());
+		for (Piece item : pieces)
+			clone.add((Piece) item.clone());
+		return clone;
 	}
 }

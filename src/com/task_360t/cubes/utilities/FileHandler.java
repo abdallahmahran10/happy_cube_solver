@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import com.task_360t.cubes.models.Cube;
 
@@ -23,6 +24,23 @@ public class FileHandler {
 		}
 	}
 
+	/**
+	 * @param cubes
+	 */
+	public static void dumpCubes(List<Cube> cubes) {
+
+        try {
+        	PrintWriter writer = new PrintWriter("cube.txt", "UTF-8");
+        	for(Cube cube : cubes)
+        	{
+        		writer.print(cube.toString());
+        		writer.print("###########################################################"+System.lineSeparator());
+        	}
+        	writer.close();
+		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+			logger.ERROR(e);
+		}
+	}
 	public static String readFile(String fileName) {
 		String fileContent = "";
 		try {
@@ -41,4 +59,5 @@ public class FileHandler {
 		}
 		return fileContent;
 	}
+
 }

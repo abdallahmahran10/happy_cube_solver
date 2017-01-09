@@ -20,8 +20,8 @@ public class Main {
 
 	public static void main(String[] args) throws InvalidPieceException {
 		logger.INFO("Starting...");
-		//createCube(InputsHandler.PiecesInputs);
-		findAllPossibleSolutions(InputsHandler.PiecesInputs);
+		createCube(InputsHandler.PiecesInputs);
+		//findAllPossibleSolutions(InputsHandler.PiecesInputs);
 		logger.INFO("Done...");
 	}
 
@@ -35,8 +35,7 @@ public class Main {
 		CubeSolver solver = new CubeSolver();
 		try {
 			List<Cube> cubes = solver.findAllPossibleSolutions(pieces);
-//			if (cube.isCubeFormed())
-//				FileHandler.dumpCube(cube);
+			FileHandler.dumpCubes(cubes);
 		} catch (NoPossibleSolutionException e) {
 			logger.ERROR(e);
 			logger.INFO(
