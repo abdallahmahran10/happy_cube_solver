@@ -23,11 +23,11 @@ public class EdgeBitSet extends BitSet {
 
 	public boolean matches(BitSet secondSet) {
 		BitSet set = (BitSet) secondSet.clone();
-		set.or(this);
+		set.xor(this);
 		return set.get(1) && set.get(2) && set.get(3);
 	}
 
-	public EdgeBitSet edgeReverse() {
+	public EdgeBitSet reverse() {
 		if (size() < CONSTANTS.MAX_CELLS)
 			return this;
 		//

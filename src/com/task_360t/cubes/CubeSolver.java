@@ -9,7 +9,6 @@ import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
 import com.task_360t.cubes.models.Cube;
 import com.task_360t.cubes.models.Piece;
-import com.task_360t.cubes.models.SolutionPath;
 import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 
@@ -20,11 +19,11 @@ import com.task_360t.cubes.utilities.CubeLogger;
  */
 public class CubeSolver {
 	static CubeLogger logger = CubeLogger.getInstant();
-	private Queue<SolutionPath> SolutionPaths = new ConcurrentLinkedQueue<SolutionPath>();
-	Queue<Cube> cubesList = new ConcurrentLinkedQueue<Cube>();
+	Queue<Cube> cubesQueue = new ConcurrentLinkedQueue<Cube>();
 	private boolean continueSearch;
 
 	/**
+	 * search all possible solution for the given pieces
 	 * @param pieces
 	 * @return
 	 */
@@ -33,18 +32,16 @@ public class CubeSolver {
 		if (pieces.size() != CONSTANTS.MAX_FACES)
 			throw new InvalidPieceException("Invalid input pieces");
 		logger.INFO("Create a cube and try to fill with the input pieces");
-		// prepare members before start searching for solutions
-		SolutionPaths.clear();
-		SolutionPath path = new SolutionPath();
-		SolutionPaths.add(path);
+		// Find all solutions
 		continueSearch = true;
 		//
 		Cube solution = new Cube();
 		fillCubeWithPieces(solution, pieces);
-		if (cubesList.isEmpty())
+		if (cubesQueue.isEmpty())
 			throw new NoPossibleSolutionException("No possible solution found");
-		return new ArrayList(cubesList);
+		return new ArrayList<Cube>(cubesQueue);
 	}
+
 
 	/**
 	 * Arrange pieces to form a cube
@@ -78,7 +75,7 @@ public class CubeSolver {
 	 * @return if success return the filled cube
 	 */
 	private Cube fillCubeWithPieces(Cube cube, List<Piece> pieces) {
-		if (cube.isCubeFormed())
+		if (cube.isCubeFormed())		
 			return cube;
 		//
 		if (pieces.size() < 1)
@@ -91,24 +88,23 @@ public class CubeSolver {
 			if (sol != null) {
 				if(!continueSearch)
 					return sol;					
-				if (sol.isCubeFormed()) {
-					if (cubesList.peek() == null || !addedBefore(sol)) {
-						cubesList.add(new Cube(sol));
-					}
-				} 
-				//return sol;
+				
+				if (!addedBefore(sol)) 
+						cubesQueue.add(new Cube(sol));
+				
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * @param sol
+	 * Check if solution it is a unique solution or not
+	 * @param newSol
 	 * @return
 	 */
-	private boolean addedBefore(Cube c) {
-		for(Cube cube : cubesList)
-			if(cube.matches(c))
+	private boolean addedBefore(Cube newSol) {
+		for(Cube cube : cubesQueue)
+			if(cube.matches(newSol))
 				return true;
 		return false;
 	}
@@ -149,15 +145,4 @@ public class CubeSolver {
 		return null;
 	}
 
-	/**
-	 * @param pieces
-	 * @return
-	 * @throws CloneNotSupportedException
-	 */
-	private List<Piece> cloneArray(List<Piece> pieces) {
-		List<Piece> clone = new ArrayList<Piece>(pieces.size());
-		for (Piece item : pieces)
-			clone.add((Piece) item.clone());
-		return clone;
-	}
 }

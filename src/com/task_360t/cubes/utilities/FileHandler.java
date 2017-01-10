@@ -34,7 +34,7 @@ public class FileHandler {
         	for(Cube cube : cubes)
         	{
         		writer.print(cube.toString());
-        		writer.print("###########################################################"+System.lineSeparator());
+				writer.print(CONSTANTS.SOLUTION_SEPARATOR+System.lineSeparator());
         	}
         	writer.close();
 		} catch (UnsupportedEncodingException | FileNotFoundException e) {

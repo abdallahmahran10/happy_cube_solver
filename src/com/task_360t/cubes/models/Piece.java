@@ -143,8 +143,8 @@ public class Piece {
 		rightEdge = getLeftEdge();
 		lefttEdge = tmp;
 		//
-		getTopEdge().edgeReverse();
-		getBottomEdge().edgeReverse();
+		getTopEdge().reverse();
+		getBottomEdge().reverse();
 		//
 		return this;
 	}
@@ -152,8 +152,8 @@ public class Piece {
 	public Piece rotateClockWise() {
 		EdgeBitSet tmpTop = (EdgeBitSet) topEdge;
 		// set TOP edge
-		topEdge = lefttEdge.edgeReverse();
-		EdgeBitSet tmpRight = (EdgeBitSet) rightEdge.edgeReverse();
+		topEdge = lefttEdge.reverse();
+		EdgeBitSet tmpRight = (EdgeBitSet) rightEdge.reverse();
 		EdgeBitSet tmpBottom = (EdgeBitSet) bottomEdge;
 		lefttEdge = tmpBottom;
 		bottomEdge = tmpRight;

@@ -9,6 +9,10 @@ import org.junit.Test;
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.models.Piece;
 
+/*
+ * Test cases of the {@link Piece} class
+ * @author amahran
+ */
 public class PieceTest {
 
 	@Test
@@ -29,7 +33,6 @@ public class PieceTest {
 		piece = new Piece(arr, 0);
 	}
 
-	
 	@Test
 	public void testTopEdgeCreation() {
 		// Arrange
@@ -37,9 +40,9 @@ public class PieceTest {
 		// Act
 		BitSet bs = piece.getTopEdge();
 		// Assert
-		assertTrue( bs.get(0) && !bs.get(1) && !bs.get(2) && !bs.get(3) && !bs.get(4));
+		assertTrue(bs.get(0) && !bs.get(1) && !bs.get(2) && !bs.get(3) && !bs.get(4));
 	}
-	
+
 	@Test
 	public void testBottomEdgeCreation() {
 		// Arrange
@@ -57,7 +60,7 @@ public class PieceTest {
 		// Act
 		BitSet bs = piece.getRightEdge();
 		// Assert
-		assertTrue(! bs.get(0) && bs.get(1) && bs.get(2) && !bs.get(3) && !bs.get(4));
+		assertTrue(!bs.get(0) && bs.get(1) && bs.get(2) && !bs.get(3) && !bs.get(4));
 	}
 
 	@Test
@@ -66,7 +69,7 @@ public class PieceTest {
 		Piece piece = TestUtilities.getTestPiece();
 		// Act
 		BitSet bs = piece.getLeftEdge();
-		
+
 		// Assert
 		assertTrue(bs.get(0) && !bs.get(1) && bs.get(2) && !bs.get(3) && bs.get(4));
 	}
@@ -75,13 +78,13 @@ public class PieceTest {
 	public void testFlipPieceMethod_DoOneFlip() {
 		// Arrange
 		Piece piece = TestUtilities.getTestPiece();
-		Piece pieceFliped = TestUtilities.getTestPieceFliped();
+		Piece pieceFliped = TestUtilities.getTestPieceFlip();
 		// Act
 		piece.flipPiece();
 		// Assert
 		assertTrue(TestUtilities.equals(piece, pieceFliped));
 	}
-	
+
 	@Test
 	public void testFlipPieceMethod_DoTwoFlip() {
 		// Arrange
@@ -104,6 +107,7 @@ public class PieceTest {
 		// Assert
 		assertTrue(TestUtilities.equals(piece, expected));
 	}
+
 	@Test
 	public void testRotation_DoFourRotation() {
 		// Arrange
@@ -117,6 +121,5 @@ public class PieceTest {
 		// Assert
 		assertTrue(TestUtilities.equals(piece, expected));
 	}
-
 
 }

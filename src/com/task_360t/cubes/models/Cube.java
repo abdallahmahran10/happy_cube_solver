@@ -1,8 +1,5 @@
 package com.task_360t.cubes.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 
@@ -13,7 +10,7 @@ import com.task_360t.cubes.utilities.CubeLogger;
  */
 public class Cube {
 	CubeLogger logger = CubeLogger.getInstant();
-	public Piece[] faces;
+	private Piece[] faces;
 	private int currentFaceIdx;
 
 	/**
@@ -139,24 +136,6 @@ public class Cube {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < currentFaceIdx; i++)
 			buff.append(String.valueOf(faces[i].getPieceId())+System.lineSeparator() +  faces[i].toString() );
-		//
-		// if(currentFaceIdx==0)
-		// return "";
-		// StringBuffer buff = new StringBuffer();
-		// for (int i = 0; i < 5; i++) {
-		// buff.append(faces[0].getRowStr(i) + CONSTANTS.EMPTY_CELL);
-		// if(currentFaceIdx>1)
-		// buff.append(faces[1].getRowStr(i)+ CONSTANTS.EMPTY_CELL);
-		// if(currentFaceIdx>2)
-		// buff.append(faces[2].getRowStr(i));
-		// buff.append(System.lineSeparator());
-		// }
-		// if(currentFaceIdx>3)
-		// buff.append(faces[3].toString(CONSTANTS.INDENT));
-		// if(currentFaceIdx>4)
-		// buff.append(faces[4].toString(CONSTANTS.INDENT));
-		// if(currentFaceIdx>5)
-		// buff.append(faces[5].toString(CONSTANTS.INDENT));
 		return buff.toString();
 	}
 
@@ -171,11 +150,12 @@ public class Cube {
 	}
 
 	/**
+	 * Compare two cubes and return true if similar
 	 * @param cube
 	 * @return
 	 */
 	public boolean matches(Cube cube) {
-		if( cube.currentFaceIdx != cube.currentFaceIdx)
+		if( this.currentFaceIdx != cube.currentFaceIdx)
 			return false;
 		
 		for(int i=0; i<currentFaceIdx; i++)
@@ -185,6 +165,14 @@ public class Cube {
 			i++;
 		}
 		return true;
+	}
+
+	/**
+	 * Get number of faces filled in the cube
+	 * @return number of faces filled
+	 */
+	public int getNumberOfFilledFaces() {
+		return currentFaceIdx;
 	}
 
 }

@@ -16,29 +16,34 @@ import com.task_360t.cubes.utilities.FileHandler;
  */
 public class InputsHandler {
 	static CubeLogger logger = CubeLogger.getInstant();
-	static List<Piece> PiecesInputs;
-	static {
-		PiecesInputs = new ArrayList<Piece>();
-		String input = FileHandler.readFile(CONSTANTS.INPUT_FILES[2]);
 
-		try {
-			if (input != null && !input.isEmpty()) {
-				String[] lines = input.split(System.lineSeparator());
-				int i = 0;
-				int piecesCount = 0;
-				while (i < lines.length && piecesCount < 6) {
-					boolean[][] arr = new boolean[CONSTANTS.MAX_CELLS][CONSTANTS.MAX_CELLS];
-					do {
-						for (int j = 0; j < CONSTANTS.MAX_CELLS && j * 2 < lines[i].length(); j++)
-							arr[i % CONSTANTS.MAX_CELLS][j] = lines[i].charAt(j * 2) == '[';
-						++i;
-					} while (i % CONSTANTS.MAX_CELLS != 0);
-					PiecesInputs.add(new Piece(arr, piecesCount));
-					piecesCount++;
-				}
+	/**
+	 * Load pieces from input file
+	 * 
+	 * @param inputFilePath
+	 * @return
+	 * @throws InvalidPieceException
+	 */
+	public static List<Piece> loadPieces(String inputFilePath) throws InvalidPieceException {
+		List<Piece> pieces = new ArrayList<Piece>();
+		String input = FileHandler.readFile(inputFilePath);
+		int piecesCount = 0;
+		if (input != null && !input.isEmpty()) {
+			String[] lines = input.split(System.lineSeparator());
+			int i = 0;
+			while (i < lines.length && piecesCount < 6) {
+				boolean[][] arr = new boolean[CONSTANTS.MAX_CELLS][CONSTANTS.MAX_CELLS];
+				do {
+					for (int j = 0; j < CONSTANTS.MAX_CELLS && j * 2 < lines[i].length(); j++)
+						arr[i % CONSTANTS.MAX_CELLS][j] = lines[i].charAt(j * 2) == '[';
+					++i;
+				} while (i % CONSTANTS.MAX_CELLS != 0);
+				pieces.add(new Piece(arr, piecesCount));
+				piecesCount++;
 			}
-		} catch (InvalidPieceException e) {
-			logger.ERROR(e);
+			if (pieces.size() != CONSTANTS.MAX_FACES)
+				throw new InvalidPieceException("Invalid number of input pieces");
 		}
+		return pieces;
 	}
 }

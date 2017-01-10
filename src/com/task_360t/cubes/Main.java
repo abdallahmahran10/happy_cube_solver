@@ -1,12 +1,14 @@
 
 package com.task_360t.cubes;
 
+import java.io.File;
 import java.util.List;
 
 import com.task_360t.cubes.exceptions.InvalidPieceException;
 import com.task_360t.cubes.exceptions.NoPossibleSolutionException;
 import com.task_360t.cubes.models.Cube;
 import com.task_360t.cubes.models.Piece;
+import com.task_360t.cubes.utilities.CONSTANTS;
 import com.task_360t.cubes.utilities.CubeLogger;
 import com.task_360t.cubes.utilities.FileHandler;
 
@@ -18,11 +20,36 @@ import com.task_360t.cubes.utilities.FileHandler;
 public class Main {
 	static CubeLogger logger = CubeLogger.getInstant();
 
-	public static void main(String[] args) throws InvalidPieceException {
+	public static void main(String[] args) {
+		if (args.length != CONSTANTS.PROGRAM_ARGUMENTS_COUNT) {
+			System.out.println(CONSTANTS.PROGRAM_HELP);
+			return;
+		}
 		logger.INFO("Starting...");
-		createCube(InputsHandler.PiecesInputs);
-		//findAllPossibleSolutions(InputsHandler.PiecesInputs);
+		String solvingStrategy = args[0];
+		String inputFilePath = args[1];
+		if (!fileExists(inputFilePath)) {
+			logger.ERROR("Input file does not exist");
+			return;
+		}
+		try {
+			if (solvingStrategy.equals(CONSTANTS.FIND_ALL_SOLUTION_STRATEGY))
+				findAllPossibleSolutions(InputsHandler.loadPieces(inputFilePath));
+			else if (solvingStrategy.equals(CONSTANTS.FIND_ONE_SOLUTION_STRATEGY))
+				createCube(InputsHandler.loadPieces(inputFilePath));
+		} catch (InvalidPieceException e) {
+			logger.ERROR(e);
+		}
 		logger.INFO("Done...");
+	}
+
+	/**
+	 * @param inputFilePath
+	 * @return
+	 */
+	private static boolean fileExists(String filePath) {
+		File f = new File(filePath);
+		return f.exists() && !f.isDirectory();
 	}
 
 	/**
