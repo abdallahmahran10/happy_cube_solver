@@ -138,6 +138,19 @@ public class Cube {
 			buff.append(String.valueOf(faces[i].getPieceId())+System.lineSeparator() +  faces[i].toString() );
 		return buff.toString();
 	}
+	
+	public String printUnfolded() {
+		if(!this.isCubeFormed())
+			return "";
+		StringBuffer buff = new StringBuffer();
+		for (int i = 0; i < CONSTANTS.MAX_CELLS; i++)
+			buff.append(faces[0].getRowStr(i) + faces[1].getRowStr(i) + faces[2].getRowStr(i) + System.lineSeparator());
+		for(int i=3; i<CONSTANTS.MAX_FACES; i++)
+		{
+			buff.append(faces[i].toString(CONSTANTS.ENDENT) );
+		}
+		return buff.toString();
+	}
 
 	/**
 	 * 

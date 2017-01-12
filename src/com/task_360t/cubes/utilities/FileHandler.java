@@ -17,7 +17,7 @@ public class FileHandler {
 	{
         try {
         	PrintWriter writer = new PrintWriter("cube.txt", "UTF-8");
-        	writer.print(cube.toString());		
+        	writer.print(cube.printUnfolded());		
         	writer.close();
 		} catch (UnsupportedEncodingException | FileNotFoundException e) {
 			logger.ERROR(e);
@@ -33,7 +33,7 @@ public class FileHandler {
         	PrintWriter writer = new PrintWriter("cube.txt", "UTF-8");
         	for(Cube cube : cubes)
         	{
-        		writer.print(cube.toString());
+        		writer.print(cube.printUnfolded());
 				writer.print(CONSTANTS.SOLUTION_SEPARATOR+System.lineSeparator());
         	}
         	writer.close();

@@ -74,4 +74,5 @@ public class CONSTANTS {
 	 * Find all possible unique solutions mode 
 	 */
 	public static final String FIND_ALL_SOLUTION_STRATEGY = "1";
+	public static final String ENDENT = "          ";
 }

@@ -131,7 +131,7 @@ public class CubeSolver {
 			// logger.INFO(System.lineSeparator() + cube.toString());
 			if (cube.isPieceMatch(piece)) {
 				Cube tmpCube = new Cube(cube);
-				tmpCube.setNextFace(piece);
+				tmpCube.setNextFace((Piece) piece.clone());
 				// Complete the rest of the cube
 				List<Piece> tmpList = new ArrayList<Piece>(pieces);
 				tmpList.remove(piece);
